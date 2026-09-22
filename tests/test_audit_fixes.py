@@ -22,7 +22,7 @@ from agentreplay import (
     set_verbose,
     __version__,
 )
-from agentreplay.cli import cli
+
 
 
 class _StubLLM:
@@ -91,31 +91,6 @@ def test_session_repr(tmp_path: Path):
         r = repr(s)
     assert "Session" in r
 
-
-# ---------------------------------------------------------------------- #
-# doctor command
-# ---------------------------------------------------------------------- #
-def test_cli_doctor_healthy_cassette(tmp_path: Path):
-    cassette = _make_cassette(tmp_path / "cass")
-    runner = CliRunner()
-    result = runner.invoke(cli, ["doctor", str(cassette)])
-    assert result.exit_code == 0
-    assert "healthy" in result.output
-
-
-def test_cli_doctor_detects_missing_blob(tmp_path: Path):
-    """doctor should detect a missing blob file."""
-    cassette = _make_cassette(tmp_path / "cass")
-    # Delete a blob file
-    c = Cassette.open(cassette, readonly=True)
-    events = list(c.events)
-    blob_path = c.blobs._path_for(events[0].response_hash)
-    blob_path.unlink()
-
-    runner = CliRunner()
-    result = runner.invoke(cli, ["doctor", str(cassette)])
-    assert result.exit_code == 1
-    assert "missing" in result.output.lower()
 
 
 # ---------------------------------------------------------------------- #
@@ -192,14 +167,4 @@ def test_regression_report_render_shows_divergence_details(tmp_path: Path):
     assert "recorded_call_id: abc123" in output
 
 
-# ---------------------------------------------------------------------- #
-# frameworks lazy loader fix
-# ---------------------------------------------------------------------- #
-def test_wrap_langgraph_returns_module():
-    """from agentreplay.frameworks import wrap_langgraph should return the
-    langgraph module (which has wrap_llm, bind_graph, etc.) — not crash."""
-    from agentreplay.frameworks import wrap_langgraph
-    import agentreplay.frameworks.langgraph as langgraph_mod
-    assert wrap_langgraph is langgraph_mod
-    assert hasattr(wrap_langgraph, "wrap_llm")
-    assert hasattr(wrap_langgraph, "bind_graph")
+

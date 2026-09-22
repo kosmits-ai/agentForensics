@@ -97,10 +97,6 @@ __all__ = [
     "mutate_response",
     "mutate_and_replay",
     "apply_patch_set",
-    # CI regression
-    "run_corpus",
-    "RegressionReport",
-    "RegressionResult",
     # Errors
     "AgentReplayError",
     "DivergenceError",
@@ -118,6 +114,9 @@ __all__ = [
     "set_verbose",
     # Version
     "__version__",
+    "run_corpus",
+    "RegressionReport",
+    "RegressionResult"
 ]
 
 try:

@@ -1,1 +1,0 @@
-{"messages":[{"content":"What's the weather?","role":"user"},{"content":"Let me search for that.","role":"assistant"},{"content":"<results for 'weather'>","role":"tool"}],"model":"stub","tools":null}

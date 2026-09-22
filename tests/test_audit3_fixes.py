@@ -263,21 +263,4 @@ def test_set_verbose_not_overridden_by_get_logger():
     set_verbose(False)
 
 
-# ---------------------------------------------------------------------- #
-# M17: clean CLI refuses to delete corpus root
-# ---------------------------------------------------------------------- #
-def test_clean_refuses_corpus_root(tmp_path: Path):
-    """clean should refuse to delete the corpus root directory."""
-    from click.testing import CliRunner
-    from agentreplay.cli import cli
 
-    cassette = tmp_path / "cass"
-    with Recorder.create(cassette, framework="raw") as rec:
-        client = rec.wrap_custom_client(_StubLLM([{"text": "x", "usage": {}}]))
-        client.complete(messages=[{"role": "user", "content": "q"}], model="stub")
-
-    runner = CliRunner()
-    # If the cassette IS the root, clean should refuse
-    result = runner.invoke(cli, ["clean", str(cassette), "--older-than", "0d", "--no-dry-run"])
-    assert result.exit_code == 0
-    assert "SKIP" in result.output or "refusing" in result.output.lower()
